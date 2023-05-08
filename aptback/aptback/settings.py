@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
         'NAME': '127.0.0.1:1521/xe',
-        'USER': 'C##BDAPT3',
-        'PASSWORD': 'BDAPT3',
+        'USER': 'C##BDAPT',
+        'PASSWORD': 'BDAPT',
         'TEST': {
             'USER': 'default_test',
             'TBLSPACE': 'default_test_tbls',
