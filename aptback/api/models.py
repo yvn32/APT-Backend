@@ -8,6 +8,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
+from datetime import date
 
 #==============================   
 # FUNCIONES AUXILIARES
@@ -53,9 +54,11 @@ class Comuna(models.Model):
         db_table = 'comuna'
 
 class DetalleIngrediente(models.Model):
+    id = models.AutoField(primary_key=True)
     cantidad = models.IntegerField()
     item_cod_item = models.ForeignKey('Item', models.DO_NOTHING, db_column='item_cod_item')
     ft_cod_ft = models.ForeignKey('Ft', models.DO_NOTHING, db_column='ft_cod_ft')
+    costo_det = models.BigIntegerField()
 
     class Meta:
         managed = False
@@ -65,15 +68,17 @@ class DetallePedido(models.Model):
     id_registro = models.AutoField(primary_key=True)
     pedido_cod_pedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido_cod_pedido')
     categoria = models.IntegerField()
-    item_cod_item = models.ForeignKey('Item', models.DO_NOTHING, db_column='item_cod_item')
-    ft_cod_ft = models.ForeignKey('Ft', models.DO_NOTHING, db_column='ft_cod_ft')
+    item_cod_item = models.ForeignKey('Item', models.DO_NOTHING, db_column='item_cod_item', null=True)
+    ft_cod_ft = models.ForeignKey('Ft', models.DO_NOTHING, db_column='ft_cod_ft', null=True)
     cantidad = models.IntegerField()
+    costo_det = models.BigIntegerField()
 
     class Meta:
         managed = False
         db_table = 'detalle_pedido'
 
 class DetallePreparacion(models.Model):
+    id = models.AutoField(primary_key=True)
     instruccion = models.CharField(max_length=300)
     ft_cod_ft = models.ForeignKey('Ft', models.DO_NOTHING, db_column='ft_cod_ft')
 
@@ -107,8 +112,8 @@ class Ft(models.Model):
     rendimiento = models.IntegerField()
     observacion = models.CharField(max_length=500, blank=True, null=True)
     costo_tot = models.BigIntegerField()
-    img_ft = models.TextField(blank=True, null=True)  # This field type is a guess.
-
+    img_ft = models.ImageField(upload_to="fts", null=True)
+    
     class Meta:
         managed = False
         db_table = 'ft'
@@ -160,15 +165,15 @@ class Parametro(models.Model):
 
 class Pedido(models.Model):
     cod_pedido = models.AutoField(primary_key=True)
-    fecha_registro = models.DateField()
+    fecha_registro = models.DateField(auto_now_add=True)
     fecha_compromiso = models.DateField()
-    costo_tot = models.BigIntegerField()
+    costo_tot = models.BigIntegerField(default=0)
     margen = models.IntegerField()
-    precio = models.BigIntegerField()
+    precio = models.BigIntegerField(default=0)
     clienta_cod_clienta = models.ForeignKey(Clienta, models.DO_NOTHING, db_column='clienta_cod_clienta')
-    estado_pedido_cod_estado = models.ForeignKey(EstadoPedido, models.DO_NOTHING, db_column='estado_pedido_cod_estado')
-    fecha_entrega = models.DateField()
-    usuaria_id_usuaria = models.ForeignKey('Usuaria', models.DO_NOTHING, db_column='usuaria_id_usuaria')
+    estado_pedido_cod_estado = models.ForeignKey(EstadoPedido, models.DO_NOTHING, db_column='estado_pedido_cod_estado', default=1)
+    fecha_entrega = models.DateField(default=date(2099, 1, 1))
+    usuaria_id_usuaria = models.ForeignKey('Usuaria', models.DO_NOTHING, db_column='usuaria_id_usuaria', null=True, default=None)
 
     class Meta:
         managed = False

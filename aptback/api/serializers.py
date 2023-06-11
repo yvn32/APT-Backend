@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Clienta, Comuna, Entrada, Inventario, Item, Pais, Parametro, Perfil, Proveedora, Region, RepLegal, Salida, Unidad, Usuaria
+from .models import Clienta, Comuna, DetalleIngrediente, DetallePedido, DetallePreparacion, Entrada, EstadoPedido, Ft, Inventario, Item, Pais, Parametro, Pedido, Perfil, Proveedora, Region, RepLegal, Salida, Unidad, Usuaria
+
 
 class ClientaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,11 +14,41 @@ class ComunaSerializer(serializers.ModelSerializer):
         fields = ('cod_comuna', 'comuna', 'region_cod_region')
         read_only_fields = ('cod_comuna', 'comuna', 'region_cod_region', )
 
+class DetalleIngredienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetalleIngrediente
+        fields = ('id', 'cantidad', 'item_cod_item', 'ft_cod_ft', 'costo_det')
+        read_only_fields = ('id', 'costo_det', )
+
+class DetallePedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetallePedido
+        fields = ('id_registro', 'pedido_cod_pedido', 'categoria', 'item_cod_item', 'ft_cod_ft', 'cantidad', 'costo_det')
+        read_only_fields = ('id_registro', 'costo_det', )
+
+class DetallePreparacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetallePreparacion
+        fields = ('id', 'instruccion', 'ft_cod_ft')
+        read_only_fields = ('id', )
+
 class EntradaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Entrada
         fields = ('id_entrada', 'inventario_cod_art', 'fecha', 'cantidad', 'costo_unit','descripcion')
         read_only_fields = ('id_entrada', 'fecha', )
+
+class EstadoPedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstadoPedido
+        fields = ('cod_estado', 'estado')
+        read_only_fields = ('cod_estado', 'estado')
+
+class FtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ft
+        fields = ('cod_ft', 'nom_ft', 'rendimiento', 'observacion', 'costo_tot', 'img_ft')
+        read_only_fields = ('cod_ft', )
 
 class InventarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,7 +56,7 @@ class InventarioSerializer(serializers.ModelSerializer):
         fields = ('cod_art', 'nom_art', 'tot_entradas', 'tot_salidas', 'stock', 'costo_art','item_cod_item', 'proveedora_cod_proveedora')
         read_only_fields = ('cod_art', 'tot_entradas', 'tot_salidas', 'stock', 'costo_art', )
 
-class ItemSerializar(serializers.ModelSerializer):
+class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ('cod_item', 'nom_item', 'categoria', 'unidad_cod_unidad', 'cant_item', 'costo_std')
@@ -42,6 +73,18 @@ class ParametroSerializer(serializers.ModelSerializer):
         model = Parametro
         fields = ('codigo', 'parametro', 'valor_param')
         read_only_fields = ('codigo', 'parametro', )
+
+class PedidoCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pedido
+        fields = ('cod_pedido', 'fecha_registro', 'fecha_compromiso', 'costo_tot', 'margen', 'precio', 'clienta_cod_clienta', 'estado_pedido_cod_estado', 'fecha_entrega', 'usuaria_id_usuaria')
+        read_only_fields = ('cod_pedido', 'fecha_registro', 'costo_tot', 'margen', 'precio', 'fecha_entrega', )
+
+class PedidoUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pedido
+        fields = ('cod_pedido', 'fecha_registro', 'fecha_compromiso', 'costo_tot', 'margen', 'precio', 'clienta_cod_clienta', 'estado_pedido_cod_estado', 'fecha_entrega', 'usuaria_id_usuaria')
+        read_only_fields = ('cod_pedido', 'fecha_registro', 'margen', )
 
 class PerfilSerializer(serializers.ModelSerializer):
     class Meta:
